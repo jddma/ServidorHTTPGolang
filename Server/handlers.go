@@ -1,20 +1,25 @@
 package Server
 
 /*
-*agregar aqui los handles con dos parametros (http.ResponseWriter, *http.*Request)
-*
-*HandleRoot y HandlerInicio son solamente ejemplos pueden ser eliminados o
-*modificados
+*Agregar en este fichero los handles con dos parametros (http.ResponseWriter, *http.*Request)
 */
 
 import (
-	"fmt"
 	"net/http"
+	"html/template"
+	"path"
 )
 
 //Handle principal por defecto
 func HandleRoot(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Fprintf(w, "Root")
+	context := IndexContext{
+		Title: "Index",
+	}
+
+	//Renderizar archivo html
+	templatePath:= path.Join("views/", "index.html")
+	template, _ := template.ParseFiles(templatePath)
+	template.Execute(w, context)
 
 }
