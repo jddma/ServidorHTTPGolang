@@ -1,7 +1,7 @@
 package Server
 
 /*
-*Agregar en este fichero los handles con dos parametros (http.ResponseWriter, *http.*Request)
+*Agregar en este fichero los handles con dos parametros (http.ResponseWriter, *http.Request)
 */
 
 import (

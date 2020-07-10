@@ -5,19 +5,47 @@ import (
 	"time"
 	"fmt"
 	"net/http"
+	"../serverUtilities/auth"
 )
 
 /**
-*Este middleware permite verificar si un usuario esta autenticado
-*en caso de que no lo este sera redireccinado a 
+*	Para definir un nuevo Middleware puede usar la siguiente plantilla:
+
+	func MiddlewareName() Middleware {
+		return func(f http.HandlerFunc) http.HandlerFunc {
+			return func(w http.ResponseWriter, r *http.Request) {
+				f(w, r)
+			}
+		}
+	}	
+*
+*	tenga en cuenta que la línea f(w, r) es la que permite
+*	terminar con la ejecución del middleware actual y continuar con la 	*	*	ejecución del siguiente
+*	(en caso de que exista otro)	
+*/
+
+
+/**
+*	el middleware CheckAuth permite verificar si un usuario esta autenticado
+*	en caso de que no lo este sera redireccinado a la ruta que sea enviada
+*	como parametro
 */
 func CheckAuth(URLToRedirect string) Middleware {
 
 	return func(f http.HandlerFunc) http.HandlerFunc {
 
 		return func(w http.ResponseWriter, r *http.Request) {
+			
+			redirect := false
 
-			redirect := true
+			sessionData := auth.GetSessionData(r, cookieHandler)
+			_, err1 := sessionData["name"]
+			_, err2 := sessionData["id"]
+
+			if (! err1) || (! err2){
+				redirect = true
+			}
+
 			if redirect{
 				http.Redirect(w, r, URLToRedirect, 307)
 				return
@@ -29,7 +57,7 @@ func CheckAuth(URLToRedirect string) Middleware {
 
 }
 
-//esta función registra los logs a los handlers en los que se implementa
+//esta middleware registra los logs a los handlers en los que se implementa
 func Log() Middleware {
 
 	return func(f http.HandlerFunc) http.HandlerFunc {
@@ -52,4 +80,5 @@ func Log() Middleware {
 		}
 
 	}
+
 }

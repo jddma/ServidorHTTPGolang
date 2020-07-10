@@ -12,7 +12,7 @@ type Server struct{
 
 }
 
-//función encargada de agregar los middlewares deseados a un handler
+//función encargada de implementar los middlewares deseados a un handler
 func (s *Server) AddMiddleware(f http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
 
 	for _, m := range middlewares {
@@ -35,7 +35,7 @@ func (s *Server) Listen() error{
 
 }
 
-//función usada para definir los Handles del servidor
+//función usada para definir los Handles del servidor con sus respectias rutas
 func (s *Server) Handle(method string, path string, handler http.HandlerFunc){
 
 	_, exist := s.router.rules[path]
