@@ -47,7 +47,7 @@ func CheckAuth(URLToRedirect string) Middleware {
 			}
 
 			if redirect{
-				http.Redirect(w, r, URLToRedirect, 307)
+				http.Redirect(w, r, URLToRedirect, 401)
 				return
 			}
 			f(w, r)

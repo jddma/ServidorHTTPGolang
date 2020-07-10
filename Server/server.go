@@ -1,6 +1,8 @@
 package Server
 
 import (
+	"fmt"
+	"github.com/gorilla/securecookie"
 	"net/http"
 )
 
@@ -11,6 +13,15 @@ type Server struct{
 	router *Router
 
 }
+
+/**
+*	variable para definir las cookies de sesión
+*
+*	---NO MODIFICARLA EN NINGUN PUNTO DE EJECUCIÓN---
+*/
+var cookieHandler = securecookie.New(
+	securecookie.GenerateRandomKey(64),
+	securecookie.GenerateRandomKey(32))
 
 //función encargada de implementar los middlewares deseados a un handler
 func (s *Server) AddMiddleware(f http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
@@ -27,8 +38,16 @@ func (s *Server) AddMiddleware(f http.HandlerFunc, middlewares ...Middleware) ht
 func (s *Server) Listen() error{
 
 	http.Handle("/", s.router)
+
+	//estas dos líneas sirven el directorio que contiene los archivos estaticos a usar
+	fs := http.FileServer(http.Dir("static/"))
+    http.Handle("/static/", http.StripPrefix("/static/", fs))
+
 	err := http.ListenAndServe(s.port, nil)
+
+	//err := http.ListenAndServeTLS(s.port, ".crt", ".key", nil)
 	if err != nil{
+		fmt.Println("err")
 		return err
 	}
 	return nil
