@@ -9,7 +9,7 @@ import (
 //struct Server ...
 type Server struct{
 
-	port string
+	config *serverConfig
 	router *Router
 
 }
@@ -43,9 +43,13 @@ func (s *Server) Listen() error{
 	fs := http.FileServer(http.Dir("static/"))
     http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	err := http.ListenAndServe(s.port, nil)
+	var err error
+	if s.config.Ssl{
+		err = http.ListenAndServeTLS(s.config.Port, s.config.SslCertPath, s.config.SslKeyPath, nil)
+	}else {
+		err = http.ListenAndServe(s.config.Port, nil)
+	}
 
-	//err := http.ListenAndServeTLS(s.port, ".crt", ".key", nil)
 	if err != nil{
 		fmt.Println("err")
 		return err
@@ -66,10 +70,10 @@ func (s *Server) Handle(method string, path string, handler http.HandlerFunc){
 }
 
 //NewServer ...
-func NewServer(port string) *Server{
+func NewServer(config *serverConfig) *Server{
 
 	return &Server{
-		port: port,
+		config: config,
 		router: NewRouter(),
 	}
 

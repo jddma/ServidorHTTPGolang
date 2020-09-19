@@ -9,8 +9,10 @@ import (
 */
 func RunServer()  {
 
+	config := newServerConfig()
+
 	//a la función NewServer() se le debe enviar el puerto a usar
-	server := NewServer(":8081")
+	server := NewServer(config)
 
 	/**
 	*	definir en este punto los Handlers correspondientes a las rutas
